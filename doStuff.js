@@ -1,4 +1,4 @@
-
+/* Let's do some none-BST stuff here so we can work with them on a web page. */
 var renderTree = (node, path="") => {
   if(!node){
     return;
