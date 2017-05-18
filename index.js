@@ -25,7 +25,7 @@ class bst {
       this.insert(item);
     });
   }
-  insert(value, current=this.node){
+  insert_recursive(value, current=this.node){
     let next;
     // Determine if the node is open.
     if(current.value){
@@ -46,6 +46,26 @@ class bst {
       current.value = value;
     }
   }
+  insert_norecursion(value){
+    let current = this.node;
+    while(true){
+      if(!current.value){
+        current.value = value;
+        break;
+      }else{
+        if(value > current.value){
+          current.gt = current.gt || new node();
+          current = current.gt;
+        }else{
+          current.lt = current.lt || new node();
+          current = current.lt;
+        }
+      }
+    }
+  }
+  insert(...args){
+    this.insert_norecursion(...args);
+  }
   balance(){
     // The tree is balanced by retrieving an ascending order list of item in the tree
     // and then breaking them down into sublists while iteratively adding the middle
@@ -65,7 +85,27 @@ class bst {
       list = list.concat(getValues(node.gt));
       return list;
     }
-    const list = getValues();
+    const getValuesNoRecursion = (node=this.node) => {
+      const stack = [];
+      const node_order = [];
+      let current = this.node;
+
+      while(true){
+        while(current != null){
+          stack.push(current);
+          current = current.lt;
+        }
+        if(current == null && stack.length > 0){
+          let popped_item = stack.pop();
+          node_order.push(popped_item.value);
+          current = popped_item.gt;
+        }else{
+          break;
+        }
+      }
+      return node_order;
+    }
+    const list = getValuesNoRecursion();
     // The final order of the elements to insert to ensure tree is balanced.
     const order = [];
     // A list of undigested chunks of the tree's values.
