@@ -48,20 +48,16 @@ class bst {
   }
   insert_norecursion(value){
     let current = this.node;
-    while(true){
-      if(!current.value){
-        current.value = value;
-        break;
+    while(current.value){
+      if(value > current.value){
+        current.gt = current.gt || new node();
+        current = current.gt;
       }else{
-        if(value > current.value){
-          current.gt = current.gt || new node();
-          current = current.gt;
-        }else{
-          current.lt = current.lt || new node();
-          current = current.lt;
-        }
+        current.lt = current.lt || new node();
+        current = current.lt;
       }
     }
+    current.value = value;
   }
   insert(...args){
     this.insert_norecursion(...args);
@@ -86,23 +82,26 @@ class bst {
       return list;
     }
     const getValuesNoRecursion = (node=this.node) => {
+      // Retrieve a list of values in the tree in ascending order.
+      // Since we're not using recursion, we need to maintain our own stack.
       const stack = [];
+      // This will hold the values for the list we'll return.
       const node_order = [];
+      // We'll also need a variable to hold our position in the tree.
       let current = this.node;
-
-      while(true){
+      // Repeat these steps until we can determine that we've traversed the tree.
+      do {
+        // Traverse down the tree until a leaf node is reached.
         while(current != null){
+          // Add each node traversed to the stack, and reset current.
           stack.push(current);
           current = current.lt;
         }
-        if(current == null && stack.length > 0){
-          let popped_item = stack.pop();
-          node_order.push(popped_item.value);
-          current = popped_item.gt;
-        }else{
-          break;
-        }
-      }
+        // add the leaf node to the node_order list, then continue.
+        let popped_item = stack.pop();
+        node_order.push(popped_item.value);
+        current = popped_item.gt;
+      } while(stack.length > 0 || current != null);
       return node_order;
     }
     const list = getValuesNoRecursion();
